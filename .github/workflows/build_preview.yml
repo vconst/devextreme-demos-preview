@@ -1,0 +1,52 @@
+name: Preview
+
+on:
+  pull_request:
+    types: []
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          message: |
+            Preview is building
+
+      - name: Build
+        run: |
+          npm i
+          mv JSDemos ..
+          mv node_modules ..
+        env:
+          PR: ${{ github.event.number }}
+
+      - name: Checkout to pages
+        run: |
+          git fetch --depth=1
+          git checkout gh-pages 
+          rm -rf $PR
+          mkdir $PR
+          mv ../JSDemos $PR
+          mv ../node_modules $PR
+        env:
+          PR: ${{ github.event.number }}
+
+      - name: Commit to pages
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: ${{ github.event.number }}
+          branch: gh-pages
+          commit_message: build
+
+      - uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          message: |
+            Don't forger to attach links to demos:
+            Preview: https://pomahtri.github.io/devextreme-demos-preview/${{ github.event.number }}/JSDemos/Demos/<component>/<demo>/<framework>
+
+            And don't forget to remind that mvc demos are not supported
