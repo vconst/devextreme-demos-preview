@@ -1,0 +1,1 @@
+The Autocomplete component is&nbsp;a&nbsp;textbox that provides suggestions while a&nbsp;user types into&nbsp;it.

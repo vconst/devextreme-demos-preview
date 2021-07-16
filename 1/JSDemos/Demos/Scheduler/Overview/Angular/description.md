@@ -1,0 +1,1 @@
+DevExtreme Angular Scheduler is a client-side scheduling control. With a great number of features including appointment editing, multiple calendar views, current time indication, Scheduler provides excellent user experience. Native Angular features, like AOT compilation, declarative configuration, TypeScript compile-time checking, are supported as well.

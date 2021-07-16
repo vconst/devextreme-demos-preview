@@ -1,0 +1,1 @@
+The LoadPanel is&nbsp;an&nbsp;overlay UI component notifying the viewer that loading is&nbsp;in&nbsp;progress.

@@ -1,0 +1,1 @@
+DevExtreme Angular Data Grid is a responsive grid control with a vast assortment of capabilities, including data editing and validation, searching and filtering, layout customization. It supports native Angular features too: AOT compilation, declarative configuration, TypeScript compile-time checking, and more.

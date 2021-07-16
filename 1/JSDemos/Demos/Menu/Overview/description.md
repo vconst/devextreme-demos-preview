@@ -1,0 +1,1 @@
+The Menu component is&nbsp;a&nbsp;panel with clickable items. A&nbsp;click on&nbsp;an&nbsp;item opens a&nbsp;drop-down menu, which can contain several submenus.
