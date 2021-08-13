@@ -31,62 +31,58 @@ DemoApp.controller('DemoController', function DemoController($scope) {
             dataField: "SaleAmount",
             alignment: "right",
             format: "currency"
-        }],  
-        onInitialized: function(e) {
-            $scope.dataGrid = e.component;
-        },
-        toolbar: {
-            items: [
-                {
-                    location: "before",
-                    template: "totalGroupCount"
-                }, {
-                    location: "before",
-                    widget: "dxSelectBox",
-                    options: {
-                        width: 200,
-                        items: [{
-                            value: "CustomerStoreState",
-                            text: "Grouping by State"
-                        }, {
-                            value: "Employee",
-                            text: "Grouping by Employee"
-                        }],
-                        displayExpr: "text",
-                        valueExpr: "value",
+        }],   
+        onToolbarPreparing: function(e) {
+            var dataGrid = e.component;
+            
+            e.toolbarOptions.items.unshift({
+                location: "before",
+                template: "totalGroupCount"
+            }, {
+                location: "before",
+                widget: "dxSelectBox",
+                options: {
+                    width: 200,
+                    items: [{
                         value: "CustomerStoreState",
-                        onValueChanged: function(e) {
-                            $scope.dataGrid.clearGrouping();
-                            $scope.dataGrid.columnOption(e.value, "groupIndex", 0);
-                            $scope.totalCount = getGroupCount(e.value);
-                        }
+                        text: "Grouping by State"
+                    }, {
+                        value: "Employee",
+                        text: "Grouping by Employee"
+                    }],
+                    displayExpr: "text",
+                    valueExpr: "value",
+                    value: "CustomerStoreState",
+                    onValueChanged: function(e) {
+                        dataGrid.clearGrouping();
+                        dataGrid.columnOption(e.value, "groupIndex", 0);
+                        $scope.totalCount = getGroupCount(e.value);
                     }
-                }, {
-                    location: "before",
-                    widget: "dxButton",
-                    options: {
-                        text: "Collapse All",
-                        width: 136,
-                        onClick: function(e) {
-                            $scope.expanded = !$scope.expanded;
-                            e.component.option({
-                                text: $scope.expanded ? "Collapse All" : "Expand All"
-                            });
-                        }
+                }
+            }, {
+                location: "before",
+                widget: "dxButton",
+                options: {
+					text: "Collapse All",
+                	width: 136,
+                    onClick: function(e) {
+                        $scope.expanded = !$scope.expanded;
+                        e.component.option({
+                            text: $scope.expanded ? "Collapse All" : "Expand All"
+                        });
                     }
-                }, {
-                    location: "after",
-                    widget: "dxButton",
-                    options: {
-                        icon: "refresh",
-                        onClick: function() {
-                            $scope.dataGrid.refresh();
-                        }
+                }
+            }, {
+                location: "after",
+                widget: "dxButton",
+                options: {
+                    icon: "refresh",
+                    onClick: function() {
+                        dataGrid.refresh();
                     }
-                },
-                "columnChooserButton"
-            ]
-        }        
+                }
+            });
+        }
     };
     
     function getGroupCount(groupField) {

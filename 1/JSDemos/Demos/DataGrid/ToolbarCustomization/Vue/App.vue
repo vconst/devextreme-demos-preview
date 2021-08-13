@@ -5,6 +5,7 @@
     :data-source="orders"
     key-expr="ID"
     :show-borders="true"
+    @toolbar-preparing="onToolbarPreparing($event)"
   >
     <DxGrouping :auto-expand-all="expanded"/>
     <DxColumnChooser :enabled="true"/>
@@ -29,72 +30,29 @@
       alignment="right"
       format="currency"
     />
-    <DxToolbar>
-      <DxItem template="totalGroupCount" location="before">
-        <div class="informer">
-          <h2 class="count">{{ totalCount }}</h2>
-          <span class="name">Total Count</span>
-        </div>
-      </DxItem>
-      <DxItem 
-        location="before"
-        widget="dxSelectBox"
-        :options="selectBoxOptions"
-      />
-      <DxItem 
-        location="before" 
-        widget="dxButton"
-        :options="collapseButtonOptions"
-      />
-      <DxItem 
-        location="after"
-        widget="dxButton"
-        :options="refreshButtonOptions"
-      />
-      <DxItem
-        name="columnChooserButton"
-      />
-    </DxToolbar>
+    <template #totalGroupCount="{ data }">
+      <div class="informer">
+        <h2 class="count">{{ totalCount }}</h2>
+        <span class="name">Total Count</span>
+      </div>
+    </template>
   </DxDataGrid>
 </template>
 <script>
-import { DxDataGrid, DxColumn, DxGrouping, DxColumnChooser, DxLoadPanel, DxToolbar, DxItem } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxGrouping, DxColumnChooser, DxLoadPanel } from 'devextreme-vue/data-grid';
 import query from 'devextreme/data/query';
 import service from './data.js';
 
 export default {
   components: {
-    DxDataGrid, DxColumn, DxGrouping, DxColumnChooser, DxLoadPanel, DxToolbar, DxItem
+    DxDataGrid, DxColumn, DxGrouping, DxColumnChooser, DxLoadPanel
   },
   data() {
     return {
       orders: service.getOrders(),
       gridRefName: 'dataGrid',
       expanded: true,
-      totalCount: 0,
-      selectBoxOptions: {
-        width: 200,
-        items: [{
-          value: 'CustomerStoreState',
-          text: 'Grouping by State'
-        }, {
-          value: 'Employee',
-          text: 'Grouping by Employee'
-        }],
-        displayExpr: 'text',
-        valueExpr: 'value',
-        value: 'CustomerStoreState',
-        onValueChanged: this.groupChanged.bind(this)
-      },
-      collapseButtonOptions: {
-        width: 136,
-        text: 'Collapse All',
-        onClick: this.collapseAllClick.bind(this)
-      },
-      refreshButtonOptions: {
-        icon: 'refresh',
-        onClick: this.refreshDataGrid.bind(this)
-      }
+      totalCount: 0
     };
   },
   created() {
@@ -105,6 +63,44 @@ export default {
       return query(this.orders)
         .groupBy(groupField)
         .toArray().length;
+    },
+    onToolbarPreparing(e) {
+      e.toolbarOptions.items.unshift({
+        location: 'before',
+        template: 'totalGroupCount'
+      }, {
+        location: 'before',
+        widget: 'dxSelectBox',
+        options: {
+          width: 200,
+          items: [{
+            value: 'CustomerStoreState',
+            text: 'Grouping by State'
+          }, {
+            value: 'Employee',
+            text: 'Grouping by Employee'
+          }],
+          displayExpr: 'text',
+          valueExpr: 'value',
+          value: 'CustomerStoreState',
+          onValueChanged: this.groupChanged.bind(this)
+        }
+      }, {
+        location: 'before',
+        widget: 'dxButton',
+        options: {
+          width: 136,
+          text: 'Collapse All',
+          onClick: this.collapseAllClick.bind(this)
+        }
+      }, {
+        location: 'after',
+        widget: 'dxButton',
+        options: {
+          icon: 'refresh',
+          onClick: this.refreshDataGrid.bind(this)
+        }
+      });
     },
     groupChanged(e) {
       this.$refs[this.gridRefName].instance.clearGrouping();
