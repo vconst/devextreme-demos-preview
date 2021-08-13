@@ -5,6 +5,7 @@ $(function(){
     var store = new DevExpress.data.CustomStore({
         key: "OrderNumber",
         load: function (loadOptions) {
+            debugger
             var deferred = $.Deferred(),
                 args = {};
 
