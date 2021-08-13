@@ -20,9 +20,9 @@ jobs:
       - name: Get modified demo path
         id: demo_path
         run: |
-          FILES = $(curl -s -X GET -G "${{ github.event.pull_request.url }}/files")
-          NODE_SCRIPT = "JSON.parse(require('fs').readFileSync(0).toString()).map(file => file.filename).filter(name => name.startsWith('JSDemos/Demos/'))[0]?.split('/').slice(0, 4).join('/')"
-          DEMO_PATH = $(echo $FILES | node -p -e $NODE_SCRIPT)
+          FILES=$(curl -s -X GET -G "${{ github.event.pull_request.url }}/files")
+          NODE_SCRIPT="JSON.parse(require('fs').readFileSync(0).toString()).map(file => file.filename).filter(name => name.startsWith('JSDemos/Demos/'))[0]?.split('/').slice(0, 4).join('/')"
+          DEMO_PATH=$(echo $FILES | node -p -e $NODE_SCRIPT)
           echo "::set-output name=result::$DEMO_PATH"
       - name: Build
         run: |
