@@ -20,8 +20,10 @@ jobs:
       - name: Get modified demo path
         id: demo_path
         run: |
-          curl -s -X GET -G "${{ github.event.pull_request.url }}/files" | node -p -e "JSON.parse(require('fs').readFileSync(0).toString()).map(file => file.filename).filter(name => name.startsWith('JSDemos/Demos/'))[0]?.split('/').slice(0, 4).join('/')"
-
+          $FILES = $(curl -s -X GET -G "${{ github.event.pull_request.url }}/files")
+          $NODE_SCRIPT = "JSON.parse(require('fs').readFileSync(0).toString()).map(file => file.filename).filter(name => name.startsWith('JSDemos/Demos/'))[0]?.split('/').slice(0, 4).join('/')"
+          $DEMO_PATH = $(echo $FILES | node -p -e $NODE_SCRIPT)
+          echo "::set-output name=result::$DEMO_PATH"
       - name: Build
         run: |
           npm i
@@ -50,8 +52,6 @@ jobs:
 
       - uses: marocchino/sticky-pull-request-comment@v2
         with:
+          recreate: true
           message: |
-            Don't forger to attach links to demos:
-            Preview: https://${{ github.actor }}.github.io/${{ github.event.pull_request.repo.name }}/${{ github.event.number }}/JSDemos/Demos/<component>/<demo>/<framework>
-
-            And don't forget to remind that mvc demos are not supported
+            Preview: https://${{ github.actor }}.github.io/${{ github.event.repository.name }}/${{ github.event.number }}/${{ steps.demo_path.outputs.result }}/jQuery
