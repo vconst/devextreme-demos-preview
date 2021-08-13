@@ -17,6 +17,11 @@ jobs:
           message: |
             Preview is building
 
+      - name: Get modified demo path
+        id: demo_path
+        run: |
+          curl -s -X GET -G "${{ github.event.pull_request.url }}/files" | node -p -e "JSON.parse(require('fs').readFileSync(0).toString()).map(file => file.filename).filter(name => name.startsWith('JSDemos/Demos/'))[0]?.split('/').slice(0, 4).join('/')"
+
       - name: Build
         run: |
           npm i
@@ -41,12 +46,12 @@ jobs:
         with:
           file_pattern: ${{ github.event.number }}
           branch: gh-pages
-          commit_message: build
+          commit_message: pr-${{ github.event.number }}-preview
 
       - uses: marocchino/sticky-pull-request-comment@v2
         with:
           message: |
             Don't forger to attach links to demos:
-            Preview: https://pomahtri.github.io/devextreme-demos-preview/${{ github.event.number }}/JSDemos/Demos/<component>/<demo>/<framework>
+            Preview: https://${{ github.actor }}.github.io/${{ github.event.pull_request.repo.name }}/${{ github.event.number }}/JSDemos/Demos/<component>/<demo>/<framework>
 
             And don't forget to remind that mvc demos are not supported
