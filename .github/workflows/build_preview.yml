@@ -12,17 +12,12 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          message: |
-            Preview is building
-
       - name: Get modified demo path
         id: demo_path
         run: |
-          FILES = $(curl -s -X GET -G "${{ github.event.pull_request.url }}/files")
-          NODE_SCRIPT = "JSON.parse(require('fs').readFileSync(0).toString()).map(file => file.filename).filter(name => name.startsWith('JSDemos/Demos/'))[0]?.split('/').slice(0, 4).join('/')"
-          DEMO_PATH = $(echo $FILES | node -p -e $NODE_SCRIPT)
+          FILES=$(curl -s -X GET -G "${{ github.event.pull_request.url }}/files")
+          NODE_SCRIPT="JSON.parse(require('fs').readFileSync(0).toString()).map(file => file.filename).filter(name => name.startsWith('JSDemos/Demos/'))[0]?.split('/').slice(2, 4).join('/')"
+          DEMO_PATH=$(echo $FILES | node -p -e "$NODE_SCRIPT")
           echo "::set-output name=result::$DEMO_PATH"
       - name: Build
         run: |
@@ -54,4 +49,9 @@ jobs:
         with:
           recreate: true
           message: |
-            Preview: https://${{ github.actor }}.github.io/${{ github.event.repository.name }}/${{ github.event.number }}/${{ steps.demo_path.outputs.result }}/jQuery
+            Preview for **${{ steps.demo_path.outputs.result }}** demo:
+
+            [jQuery](https://${{ github.actor }}.github.io/${{ github.event.repository.name }}/${{ github.event.number }}/JSDemos/Demos/${{ steps.demo_path.outputs.result }}/jQuery)
+            [Angular](https://${{ github.actor }}.github.io/${{ github.event.repository.name }}/${{ github.event.number }}/JSDemos/Demos/${{ steps.demo_path.outputs.result }}/Angular)
+            [Vue](https://${{ github.actor }}.github.io/${{ github.event.repository.name }}/${{ github.event.number }}/JSDemos/Demos/${{ steps.demo_path.outputs.result }}/Vue)
+            [React](https://${{ github.actor }}.github.io/${{ github.event.repository.name }}/${{ github.event.number }}/JSDemos/Demos/${{ steps.demo_path.outputs.result }}/React)
